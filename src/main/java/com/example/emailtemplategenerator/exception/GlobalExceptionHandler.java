@@ -38,4 +38,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse(500, "Something went wrong. Please try again later.", List.of()));
     }
+
+    @ExceptionHandler(AiServiceException.class)
+    public ResponseEntity<ErrorResponse> handleAiFailure(AiServiceException ex) {
+        log.error("AI service error", ex);
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                .body(new ErrorResponse(502, "The AI service is unavailable. Please try again later.", List.of()));
+    }
 }
