@@ -33,6 +33,7 @@ public class GeminiClient {
                 "contents", List.of(Map.of("parts", List.of(Map.of("text", prompt))))
         );
 
+        long start = System.nanoTime();
         try {
             Map<?, ?> response = restClient.post()
                     .uri("/models/{model}:generateContent", props.getModel())
@@ -44,6 +45,9 @@ public class GeminiClient {
         } catch (RestClientException e) {
             log.error("Gemini call failed: {}", e.getMessage());
             throw new AiServiceException("AI service call failed", e);
+        } finally {
+            long elapsedMs = (System.nanoTime() - start) / 1_000_000;
+            log.info("Gemini call finished in {} ms (model={})", elapsedMs, props.getModel());
         }
     }
 
